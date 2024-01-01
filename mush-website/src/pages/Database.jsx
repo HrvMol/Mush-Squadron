@@ -1,5 +1,5 @@
 import React from 'react'
-import { Navbar, NavItem, NavLink, ComingSoon, Footer } from '../components'
+import { Navbar, NavItem, NavLink, ComingSoon, Footer, Table } from '../components'
 
 export const Database = () => (
   <div className="w-full overflow-hidden relative min-h-[100vh] bg-gradient-to-b dark:from-custom-black dark:to-custom-dark-grey from-custom-white to-custom-grey">
@@ -16,7 +16,8 @@ export const Database = () => (
 
     <div className='flex justify-center items-center pt-[160px]'>
       <div className='pb-36'>
-        <ComingSoon />
+        <Table />
+        {/* <ComingSoon /> */}
       </div>
       <Footer />
     </div>

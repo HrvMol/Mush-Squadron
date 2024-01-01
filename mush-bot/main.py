@@ -8,8 +8,7 @@ intents = discord.Intents().all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 #token allows to sign in to the bot account
-# TOKEN = os.environ.get('BOT_TOKEN_TEST')
-TOKEN = 'MTAwMTk5MjAyOTg2NzM2NDQ4NQ.G3dhwf.O9kNCDZf_l1Pqn19-_qPdV2FsTtgptg3o6Ewk0'
+TOKEN = str(os.environ.get('BOT_TOKEN'))
 
 #loads cogs from ./cogs folder
 for file in os.listdir('./mush-bot/cogs'):

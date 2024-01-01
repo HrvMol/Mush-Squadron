@@ -2,7 +2,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import psycopg2
 
-#connect to db
+# Connect to db
 con = psycopg2.connect(
     host='localhost',
     port=5432,
@@ -13,7 +13,7 @@ con = psycopg2.connect(
 
 cur = con.cursor()
  
-#Configure driver to run Chrome headless
+# Configure driver to run Chrome headless
 options = webdriver.ChromeOptions()
 options.add_argument("--headless=new")
 driver = webdriver.Chrome(options=options)
@@ -33,10 +33,10 @@ players_in_squad = []
 for i in range(len(names)):
     name = names[i].text
 
-    #get 4 divs after the name for the user stats
+    # Get 4 divs after the name for the user stats
     user_data = names[i].find_all_next(limit=4)
 
-    #remove whitespaces, newlines and format
+    # Remove whitespaces, newlines and format
     name = " ".join(name.split())
     clan_rating = int(" ".join(user_data[0].contents[0].split()))
     activity = int(" ".join(user_data[1].contents[0].split()))
@@ -49,19 +49,11 @@ for i in range(len(names)):
     elif name.endswith('@live'):
         name = name[:-5]
 
-    #format date into format accepted by postgres
+    # Format date into format accepted by postgres
     join_date = join_date.split('.')
     formatted_date = '-'.join([join_date[2], join_date[1], join_date[0]])
 
-    # SQL to add or update the table with the new data.
-    # It is not necessary to set role as the discord bot takes this task due to the different hierarchal structure which more accurately reflects responsibilities of members.
-    # sql = '''
-    # INSERT INTO webscraper (id, player, clan_rating, activity, entry_date, messages_sent, vc_time, in_squadron)
-    # VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-    # ON CONFLICT (id) DO UPDATE
-    # SET player = excluded.player, clan_rating = excluded.clan_rating, activity = excluded.activity, entry_date = excluded.entry_date, in_squadron = excluded.in_squadron
-    # '''
-
+    # Update if user is already in the table, if not, create new entry
     sql = '''
     DO
     $do$
@@ -82,7 +74,7 @@ for i in range(len(names)):
 
     players_in_squad.append(name)
     
-#update users who are not in the squadron in game
+# Update users who are not in the squadron in game
 cur.execute('UPDATE webscraper SET in_squadron = False WHERE NOT (player = ANY (%s));', (players_in_squad,))
 
 # remove users who are no longer part of the squadron in game.
@@ -91,6 +83,9 @@ cur.execute('UPDATE webscraper SET in_squadron = False WHERE NOT (player = ANY (
 
 
 con.commit()
-#close the connection and cursor
+# close the connection and cursor
 cur.close()
 con.close()
+
+# HOW TO FIND POSTGRES CONTAINER IP
+# DOCKER PS, COPY CONTAINER ID, DOCKER INSPECT [ID]

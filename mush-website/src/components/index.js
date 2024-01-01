@@ -4,6 +4,7 @@ import { Hero } from "./Hero";
 import { WhatWeDo } from "./WhatWeDo";
 import { Footer } from "./Footer";
 import { ComingSoon } from "./ComingSoon";
+import Table from "./Table";
 
 export {
     ScrollToTop,
@@ -13,5 +14,6 @@ export {
     Hero,
     WhatWeDo,
     Footer,
-    ComingSoon
+    ComingSoon,
+    Table
 }
