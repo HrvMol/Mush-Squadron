@@ -3,7 +3,7 @@ import React from 'react'
 export const Hero = () => (
     <section className='w-full flex md:flex-row flex-col px-[120px] justify-between items-center gap-[120px]'>
         <div className='flex flex-col items-start gap-[90px] max-w-[800px] md:w-[40vw] w-[90vw]'>
-            <h1 className='font-karla text-[96px] font-[500] md:text-left text-center dark:text-custom-white text-custom-black uppercase'>Mush War Thunder</h1>
+            <h1 className='font-karla lg:text-[96px] text-[70px] font-[500] md:text-left text-center self-center dark:text-custom-white text-custom-black uppercase'>Mush <br /> War Thunder</h1>
             <div className='flex flex-col p-[10px] items-start gap-[30px] self-stretch'>
                 <p className='font-karla text-[36px] font-[500] md:text-left text-center dark:text-custom-white text-custom-black uppercase'>
                     Mush is a top 100 competetive War Thunder squadron. <br /><br />

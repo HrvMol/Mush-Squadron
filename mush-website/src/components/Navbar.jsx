@@ -11,20 +11,6 @@ function Navbar(props) {
 
       {/* Desktop view */}
       <ul className='list-none sm:flex hidden justify-end flex-1 items-center'>
-        {/* <li>
-          <Link to="/home" className='font-karla font-normal text-[24px] dark:text-custom-white text-custom-black uppercase leading-none'>Home</Link>
-        </li>
-        <li>
-          <Link to="/gallery" className='font-karla font-normal text-[24px] dark:text-custom-white text-custom-black uppercase leading-none'>Gallery</Link>
-        </li>
-        <li>
-          <Link to="/database" className='font-karla font-normal text-[24px] dark:text-custom-white text-custom-black uppercase leading-none'>Database</Link>
-        </li>
-        <li className=''>
-          <a href='https://www.google.com/' className='px-3 pb-0.5 rounded-full bg-custom-red font-karla font-normal text-[24px] dark:text-custom-white text-custom-black uppercase leading-none'>
-            Join Us
-          </a>
-        </li> */}
         { props.children }
       </ul>
 
