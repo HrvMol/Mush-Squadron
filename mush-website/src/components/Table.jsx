@@ -14,7 +14,7 @@ export default function Table() {
         ).then(
             data => {
                 setData(data)
-                console.log(data.users)
+                // console.log(data.users)
             }
         )
     }, [])
@@ -24,21 +24,81 @@ export default function Table() {
         // seperates each user out into it own so it can be iteratively manipulated
         const updateData = [...data.users]
 
-        console.log(updateData[0][col])
+        console.log(col)
 
         // checking if it is a number and applying the number sort
         if (updateData[0][col] === parseInt(data.users[0][col], 10)) {
             // checks if it should sort ascending or descending
             if (prevCol == col) {
                 // contents of the sort function is used to sort the numbers
-                // setData(updateData.sort((a,b) => b[col]-a[col]).reverse())
-                setData({"users": updateData.sort((a,b) => b[col]-a[col]).reverse()})
+                setData({"users": updateData.sort((a,b) => a[col]-b[col])})
                 
                 // resetting the order for ascending/descending
                 prevCol = ''
             } else {
                 // placing the data back into the users object for use in the mapping operation performed to display the items in the table
                 setData({"users": updateData.sort((a,b) => b[col]-a[col])})
+
+                prevCol = col
+            }
+        } else if (col == 'player') {
+            if (prevCol == col) {
+                // contents of the sort function is used to sort the names
+                setData({"users": updateData.sort((a, b) => {
+                    // converts to lowercase to avoid issues when comparing uppercase to lowercase
+                    let na = a.player.toLowerCase()
+                    let nb = b.player.toLowerCase()
+
+                    // comparing which value is greater then telling the sort which to move or to not move at all
+                    if (na < nb) {
+                        return 1
+                    } else if (na > nb) {
+                        return -1
+                    } else return 0
+                })})
+                
+                // resetting the order for ascending/descending
+                prevCol = ''
+            } else {
+                // contents of the sort function is used to sort the names
+                setData({"users": updateData.sort((a, b) => {
+                    // converts to lowercase to avoid issues when comparing uppercase to lowercase
+                    let player1 = a.player.toLowerCase()
+                    let player2 = b.player.toLowerCase()
+
+                    // comparing which value is greater then telling the sort which to move or to not move at all
+                    if (player1 < player2) {
+                        return -1
+                    } else if (player1 > player2) {
+                        return 1
+                    } else return 0
+                })})
+
+                prevCol = col
+            }
+        } else if (col == 'entry_date') {
+            // checks if it should sort ascending or descending
+            if (prevCol == col) {
+                // contents of the sort function is used to sort the numbers
+                setData({"users": updateData.sort((a,b) => {
+                    // removes useless data and then creates date object
+                    let date1 = new Date(a.entry_date.slice(0, 10))
+                    let date2 = new Date(b.entry_date.slice(0, 10))
+
+                    return date2 - date1
+                })})
+                
+                // resetting the order for ascending/descending
+                prevCol = ''
+            } else {
+                // placing the data back into the users object for use in the mapping operation performed to display the items in the table
+                setData({"users": updateData.sort((a,b) => {
+                    // removes useless data and then creates date object
+                    let date1 = new Date(a.entry_date.slice(0, 10))
+                    let date2 = new Date(b.entry_date.slice(0, 10))
+
+                    return date1 - date2
+                })})
 
                 prevCol = col
             }
@@ -59,9 +119,9 @@ export default function Table() {
                             <th className='border-2 dark:border-custom-grey border-custom-black bg-custom-red cursor-pointer' onClick={() => sortCols('player')}>Username</th>
                             <th className='border-2 dark:border-custom-grey border-custom-black bg-custom-red cursor-pointer' onClick={() => sortCols('clan_rating')}>SRB Points</th>
                             <th className='border-2 dark:border-custom-grey border-custom-black bg-custom-red cursor-pointer' onClick={() => sortCols('activity')}>Activity</th>
-                            <th className='border-2 dark:border-custom-grey border-custom-black bg-custom-red cursor-pointer' onClick={() => sortCols('entry_date')}>Messages Sent</th>
-                            <th className='border-2 dark:border-custom-grey border-custom-black bg-custom-red cursor-pointer' onClick={() => sortCols('messages_sent')}>VC Time</th>
-                            <th className='border-2 dark:border-custom-grey border-custom-black bg-custom-red cursor-pointer' onClick={() => sortCols('vc_time')}>Join Date</th>
+                            <th className='border-2 dark:border-custom-grey border-custom-black bg-custom-red cursor-pointer' onClick={() => sortCols('messages_sent')}>Messages Sent</th>
+                            <th className='border-2 dark:border-custom-grey border-custom-black bg-custom-red cursor-pointer' onClick={() => sortCols('vc_time')}>Minutes in VC</th>
+                            <th className='border-2 dark:border-custom-grey border-custom-black bg-custom-red cursor-pointer' onClick={() => sortCols('entry_date')}>Join Date</th>
                         </tr>
                     </thead>
                     {/* mapping the data to create a row for each member and inputting their data */}

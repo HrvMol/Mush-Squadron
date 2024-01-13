@@ -18,6 +18,8 @@ class Db(commands.Cog):
         # Checks if the author is a bot and ignores if true
         if ctx.author.bot:
             return
+        
+        self.bot.settings.retrieveSetting('webscrape_interval_seconds')
             
         # Connect to the database and iterate the number of messages sent
         con, cur = connect()
