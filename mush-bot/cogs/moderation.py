@@ -18,5 +18,10 @@ class Moderation(commands.Cog):
         i = await ctx.channel.purge(limit = messages)
         await ctx.respond(f'I have purged {len(i)} messages')
 
+    @slash_command(description="update a setting")
+    async def settings(self, ctx):
+        self.bot.settings.updateSetting('a', 'b')
+        await ctx.respond(f'Modified Setting')
+
 def setup(client):
     client.add_cog(Moderation(client))

@@ -107,6 +107,8 @@ class Db(commands.Cog):
                 con.commit()
                 close(con, cur)
 
+    
+
 # Creates connection to the database
 def connect():
     con = psycopg2.connect(

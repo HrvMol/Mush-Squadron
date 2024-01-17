@@ -97,7 +97,7 @@ class Webscraper(commands.Cog):
         close(con, cur)
 
         # HOW TO FIND POSTGRES CONTAINER IP
-        # DOCKER PS, COPY CONTAINER ID, DOCKER INSPECT [ID]
+        # docker ps, COPY CONTAINER ID, docker inspect [ID]
 
 def setup(client):
     client.add_cog(Webscraper(client))

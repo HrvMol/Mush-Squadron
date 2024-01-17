@@ -40,4 +40,4 @@ async def test(ctx):
 
 #run bot
 # bot.run(TOKEN)
-bot.run('MTAwMTk5MjAyOTg2NzM2NDQ4NQ.G9GYAI._NAaTP_GWzrI62epoRTnlxmEiZDVQwBjlVZfhw')
+bot.run('MTAwMTk5MjAyOTg2NzM2NDQ4NQ.GZsE7Y.xCDrg4OkiR3kbbHsLAjSj7z7GnlHHnaKB3lgiE')

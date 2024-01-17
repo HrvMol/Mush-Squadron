@@ -14,7 +14,6 @@ export default function Table() {
         ).then(
             data => {
                 setData(data)
-                // console.log(data.users)
             }
         )
     }, [])
@@ -144,6 +143,5 @@ export default function Table() {
                 </table>
             )}
         </div>
-
     )
 }

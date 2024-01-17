@@ -7,7 +7,6 @@ export const Database = () => (
         <div className='w-full'>
           <Navbar>
             <NavItem to='/' text='Home' />
-            <NavItem to='/gallery' text='Gallery' />
             <NavItem to='/database' text='Database' />
             <NavLink to='https://discord.gg/JkJvjfkXzU' text='Join Us' />
           </Navbar>
@@ -17,7 +16,6 @@ export const Database = () => (
     <div className='flex justify-center items-center pt-[160px]'>
       <div className='pb-36'>
         <Table />
-        {/* <ComingSoon /> */}
       </div>
       <Footer />
     </div>
