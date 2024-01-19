@@ -1,11 +1,14 @@
 import discord
 from discord.ext import commands
 import os
+from database import Settings
 # USES PY-CORD DISCORD LIBRARY
 
 #bot intents to allow for getting info
 intents = discord.Intents().all()
 bot = commands.Bot(command_prefix='!', intents=intents)
+
+bot.settings = Settings
 
 #token allows to sign in to the bot account
 TOKEN = str(os.environ.get('BOT_TOKEN'))
@@ -36,4 +39,5 @@ async def test(ctx):
     await ctx.respond("Operational")
 
 #run bot
-bot.run(TOKEN)
+# bot.run(TOKEN)
+bot.run('MTAwMTk5MjAyOTg2NzM2NDQ4NQ.GZsE7Y.xCDrg4OkiR3kbbHsLAjSj7z7GnlHHnaKB3lgiE')

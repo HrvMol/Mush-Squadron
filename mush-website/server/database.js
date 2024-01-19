@@ -1,3 +1,4 @@
+const { request, response } = require("express")
 const { Pool } = require("pg")
 
 // connect to database
@@ -20,6 +21,16 @@ const getUsers = (request, response) => {
   })
 }
 
+const getSetting = (request, response) => {
+  pool.query('SELECT information -> $1 as information FROM settings WHERE information -> $1 is NOT NULL', [request.params.setting], (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
 module.exports = {
-    getUsers
+    getUsers,
+    getSetting
 }

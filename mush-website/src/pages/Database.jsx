@@ -16,7 +16,6 @@ export const Database = () => (
     <div className='flex justify-center items-center pt-[160px]'>
       <div className='pb-36'>
         <Table />
-        {/* <ComingSoon /> */}
       </div>
       <Footer />
     </div>

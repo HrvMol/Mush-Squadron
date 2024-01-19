@@ -101,5 +101,5 @@ class Srb(commands.Cog):
 
         msg = await ctx.respond(role.mention, embed=embed, view=view)
 
-def setup(bot:commands.Bot):
-    bot.add_cog(MyCog(bot))
+def setup(client):
+    client.add_cog(Srb(client))
