@@ -20,7 +20,7 @@ export default function Table() {
 
     function sortCols(col) {
         // needed to update table content in realtime without needing to refresh page
-        // seperates each user out into it own so it can be iteratively manipulated
+        // seperates each user out into its own so it can be iteratively manipulated
         const updateData = [...data.users]
 
         console.log(col)
@@ -108,7 +108,7 @@ export default function Table() {
         <div>
             {/* checking if data hasnt been retrieved yet then displaying loading if so */}
             {(typeof data.users === 'undefined') ? (
-                <p>Loading...</p>
+                <p className='font-karla lg:text-[96px] text-[70px] font-[500] dark:text-custom-white text-custom-black text-center'>Loading...</p>
             ): (
                 <table className='w-[80vw] dark:text-custom-white text-custom-black text-center'>
                     {/* header element */}

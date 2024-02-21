@@ -9,6 +9,7 @@ const app = express()
 app.use(cors())
 
 app.get('/users', db.getUsers)
+// NOT USED
 app.get('/settings/:setting', db.getSetting)
 
 app.listen(5000, () => console.log("Server on port 5000"))

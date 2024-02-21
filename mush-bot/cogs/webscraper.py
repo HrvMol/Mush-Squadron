@@ -89,7 +89,7 @@ class Webscraper(commands.Cog):
 
         # remove users who are no longer part of the squadron in game.
         # NEED TO UPDATE TO ONLY REMOVE IF USER IS NOT IN DISCORD AND IN GAME
-        # cur.execute('DELETE FROM webscraper WHERE NOT (player = ANY (%s));', (players_in_squad,))
+        cur.execute('DELETE FROM webscraper WHERE in_discord=%s AND in_squadron=%s;', (False,False))
 
 
         con.commit()

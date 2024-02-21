@@ -9,7 +9,7 @@ export const Hero = () => (
                     Mush is a top 100 competetive War Thunder squadron. <br /><br />
                     We are the result of years of hard work.
                 </p>
-                <a href='https://www.google.com/' className='px-4 py-2 rounded-full bg-custom-red md:self-start self-center'>
+                <a href='https://discord.gg/u2v98rdBcJ' className='px-4 py-2 rounded-full bg-custom-red md:self-start self-center'>
                     <p className='font-karla font-normal text-[24px] text-center dark:text-custom-white text-custom-black uppercase '>Join The Squadron Now</p>
                 </a>
             </div>

@@ -39,5 +39,5 @@ async def test(ctx):
     await ctx.respond("Operational")
 
 #run bot
-# bot.run(TOKEN)
-bot.run('MTAwMTk5MjAyOTg2NzM2NDQ4NQ.GZsE7Y.xCDrg4OkiR3kbbHsLAjSj7z7GnlHHnaKB3lgiE')
+bot.run(TOKEN)
+# bot.run('MTAwMTk5MjAyOTg2NzM2NDQ4NQ.GZsE7Y.xCDrg4OkiR3kbbHsLAjSj7z7GnlHHnaKB3lgiE')

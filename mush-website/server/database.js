@@ -21,6 +21,7 @@ const getUsers = (request, response) => {
   })
 }
 
+// NOT USED
 const getSetting = (request, response) => {
   pool.query('SELECT information -> $1 as information FROM settings WHERE information -> $1 is NOT NULL', [request.params.setting], (error, results) => {
     if (error) {
