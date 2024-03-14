@@ -111,17 +111,21 @@ class Db(commands.Cog):
 
 # Creates connection to the database
 def connect():
-    con = psycopg2.connect(
-        host='localhost',
-        port=5432,
-        database='postgres',
-        user='postgres',
-        password='postgres'
-    )
+    try:
+        con = psycopg2.connect(
+            host='localhost',
+            port=5432,
+            database='postgres',
+            user='postgres',
+            password='postgres'
+        )
 
-    cur = con.cursor()
+        cur = con.cursor()
 
-    return con, cur
+        return con, cur
+
+    except:
+        print("Could not connect to database")
 
 # Close the connection
 def close(con, cur):

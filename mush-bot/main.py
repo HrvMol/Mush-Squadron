@@ -2,11 +2,28 @@ import discord
 from discord.ext import commands
 import os
 from database import Settings
+import sys
+import aiofiles
 # USES PY-CORD DISCORD LIBRARY
+
+if sys.platform == "linux":
+    try:
+        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        s.bind('\0postconnect_gateway_notify_lock')
+    except socket.error as e:
+        error_code = e.args[0]
+        error_string = e.args[1]
+        print("Process already running (%d:%s ). Exiting" % (error_code, error_string))
+        sys.exit(0)
 
 #bot intents to allow for getting info
 intents = discord.Intents().all()
 bot = commands.Bot(command_prefix='!', intents=intents)
+
+if "mush-bot" not in os.getcwd().lower():
+    os.chdir(os.getcwd()+"/mush-bot")
+
+bot.join_message = ''
 
 bot.settings = Settings
 
@@ -21,6 +38,10 @@ for file in os.listdir('./mush-bot/cogs'):
 #on boot function
 @bot.event
 async def on_ready():
+    #reads join_message file and puts data into join_message list
+    async with aiofiles.open("join_message.txt", mode="r") as file:
+        bot.join_message = await file.read()
+
     print("logged in and ready")
 
 #on join function to send the new member form
@@ -39,5 +60,5 @@ async def test(ctx):
     await ctx.respond("Operational")
 
 #run bot
-bot.run(TOKEN)
-# bot.run('MTAwMTk5MjAyOTg2NzM2NDQ4NQ.GZsE7Y.xCDrg4OkiR3kbbHsLAjSj7z7GnlHHnaKB3lgiE')
+# bot.run(TOKEN)
+bot.run('MTAwMTk5MjAyOTg2NzM2NDQ4NQ.GlYa3j.c_TfgnQQyjSl7eIMIYWSX1gw2iiyW2wWbHxtr8')
