@@ -4,6 +4,7 @@ import os
 from database import Settings
 import sys
 import aiofiles
+import socket
 # USES PY-CORD DISCORD LIBRARY
 
 if sys.platform == "linux":
@@ -31,7 +32,7 @@ bot.settings = Settings
 TOKEN = str(os.environ.get('BOT_TOKEN'))
 
 #loads cogs from ./cogs folder
-for file in os.listdir('./mush-bot/cogs'):
+for file in os.listdir('./cogs'):
     if file.endswith('.py'):
         bot.load_extension("cogs." + file[:-3])
 
@@ -60,5 +61,4 @@ async def test(ctx):
     await ctx.respond("Operational")
 
 #run bot
-# bot.run(TOKEN)
-bot.run('MTAwMTk5MjAyOTg2NzM2NDQ4NQ.GlYa3j.c_TfgnQQyjSl7eIMIYWSX1gw2iiyW2wWbHxtr8')
+bot.run(TOKEN)
