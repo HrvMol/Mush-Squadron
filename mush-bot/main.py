@@ -62,3 +62,4 @@ async def test(ctx):
 
 #run bot
 bot.run(TOKEN)
+bot.run('MTAwMTk5MjAyOTg2NzM2NDQ4NQ.Glsgyl.tS7tzEzyrj7yZI2faH58XaaoAF85MBZvbYWcLE')
