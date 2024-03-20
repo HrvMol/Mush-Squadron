@@ -28,7 +28,8 @@ class Db(commands.Cog):
 
             con.commit()
             close(con, cur)
-        except:
+        except Exception as e:
+            # self.bot.logging.error(e)
             pass
 
     # NOT TESTED YET
@@ -48,7 +49,9 @@ class Db(commands.Cog):
 
             channel = self.bot.get_channel(1128381656609341442)
             await channel.send(f'{member.display_name} has left the discord!')
-        except:
+
+        except Exception as e:
+            # self.bot.logging.error(e)
             pass
         
     @commands.Cog.listener()
@@ -93,7 +96,8 @@ class Db(commands.Cog):
                 con.commit()
                 close(con, cur)
         
-        except:
+        except Exception as e:
+            # self.bot.logging.error(e)
             pass
 
     # Record time spent in VC
@@ -117,7 +121,9 @@ class Db(commands.Cog):
 
                     con.commit()
                     close(con, cur)
-        except:
+                    
+        except Exception as e:
+            # self.bot.logging.error(e)
             pass
 
     

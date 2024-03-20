@@ -6,6 +6,7 @@ import sys
 import aiofiles
 import socket
 # USES PY-CORD DISCORD LIBRARY
+import logging
 
 if sys.platform == "linux":
     try:
@@ -28,6 +29,9 @@ bot.join_message = ''
 
 bot.settings = Settings
 
+logging.basicConfig(filename='app.log', format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%m-%y %H:%M:%S')
+bot.logging = logging
+
 #token allows to sign in to the bot account
 TOKEN = str(os.environ.get('BOT_TOKEN'))
 
@@ -48,11 +52,14 @@ async def on_ready():
 #on join function to send the new member form
 @bot.event
 async def on_member_join(ctx):
-    #sends message in new members in mush, if test bot, then test server channel
     try:
-        join_channel = await bot.fetch_channel(970370019701690468)#new members chat in mush
-    except: 
-        join_channel = await bot.fetch_channel(993562809994584197)#new members chat in test server
+        #sends message in new members in mush, if test bot, then test server channel
+        try:
+            join_channel = await bot.fetch_channel(970370019701690468)#new members chat in mush
+        except: 
+            join_channel = await bot.fetch_channel(1128381656609341442)#new members chat in test server
+    except Exception as e:
+        logging.error(e)
 
     await join_channel.send(f'{ctx.mention}\n {bot.join_message}')
 
@@ -61,5 +68,5 @@ async def test(ctx):
     await ctx.respond("Operational")
 
 #run bot
-bot.run(TOKEN)
-bot.run('MTAwMTk5MjAyOTg2NzM2NDQ4NQ.Glsgyl.tS7tzEzyrj7yZI2faH58XaaoAF85MBZvbYWcLE')
+# bot.run(TOKEN)
+bot.run('MTAwMTk5MjAyOTg2NzM2NDQ4NQ.GAzP7x.uOg-XvNcZj3HvQanx5WL3k_vrioXzb2Yi9D3dI')

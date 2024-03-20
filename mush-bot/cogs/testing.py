@@ -12,16 +12,11 @@ class Testing(commands.Cog):
 
     # @slash_command(description="Create a signup embed for squadron battles.")
     # async def test_embed(self, ctx, br: discord.Option(str, description='Battle Rating'), window: discord.Option(str, description='SRB Window', choices=['US', 'EU']),):
-
-    #     role = discord.utils.get(ctx.guild.roles, name = 'Mussh Members')
-        
-    #     embed = discord.Embed(
-    #         title=f'Sign up for {window} {br} SRB',
-    #         description='Mark your attendance below.',
-    #         color=discord.Colour.from_rgb(255, 255, 255)
-    #     )
-        
-    #     msg = await ctx.respond(role.mention, embed=embed)
+    #     try:
+    #         msg = await ctx.respond(role.mention, embed=embed)
+    #     except Exception as e:
+    #         self.bot.logging.error(e)
+    #         await ctx.respond('An error has occurred')
 
 
 def setup(client):

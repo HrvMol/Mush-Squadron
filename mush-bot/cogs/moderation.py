@@ -14,9 +14,13 @@ class Moderation(commands.Cog):
     @slash_command(description="remove a certain number of messages")
     @commands.has_permissions(manage_messages = True)
     async def purge(self, ctx, messages: Option(int, description="How may messages do you want to purge?", requires=True)):
-        # deletes selected number of messages
-        i = await ctx.channel.purge(limit = messages)
-        await ctx.respond(f'I have purged {len(i)} messages')
+        try:
+            # deletes selected number of messages
+            i = await ctx.channel.purge(limit = messages)
+            await ctx.respond(f'I have purged {len(i)} messages')
+        except Exception as e:
+            self.bot.logging.error(e)
+            await ctx.respond('An error has occurred')
 
     # @slash_command(description="update a setting")
     # async def settings(self, ctx):
