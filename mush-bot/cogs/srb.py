@@ -7,6 +7,12 @@ class Srb(commands.Cog):
     def __init__(self, bot:commands.Bot):
         self.bot = bot
 
+        self.startUS = int(datetime.datetime.strptime(f'{datetime.date.today()} 01:00', '%Y-%m-%d %H:%M').timestamp())
+        self.endUS = int(datetime.datetime.strptime(f'{datetime.date.today()} 07:00', '%Y-%m-%d %H:%M').timestamp())
+        self.startEU = int(datetime.datetime.strptime(f'{datetime.date.today()} 14:00', '%Y-%m-%d %H:%M').timestamp())
+        self.endEU = int(datetime.datetime.strptime(f'{datetime.date.today()} 22:00', '%Y-%m-%d %H:%M').timestamp())
+        
+
     @commands.Cog.listener()
     async def on_ready(self):
         print("SRB Cog Loaded")
@@ -30,11 +36,11 @@ class Srb(commands.Cog):
             # Setting Times
             if window == 'US':
                 # -/-/-/-/-/-/- NOT SET YET -/-/-/-/-/-/-
-                start = int(datetime.datetime.strptime(f'{datetime.date.today()} 01:00', '%Y-%m-%d %H:%M').timestamp())
-                end = int(datetime.datetime.strptime(f'{datetime.date.today()} 07:00', '%Y-%m-%d %H:%M').timestamp())
+                start = self.startUS
+                end = self.endUS
             else:
-                start = int(datetime.datetime.strptime(f'{datetime.date.today()} 14:00', '%Y-%m-%d %H:%M').timestamp())
-                end = int(datetime.datetime.strptime(f'{datetime.date.today()} 22:00', '%Y-%m-%d %H:%M').timestamp())
+                start = self.startEU
+                end = self.endEU
 
             # Ensuring times are correct
             now = int(str(datetime.datetime.now().timestamp()).split('.')[0])
@@ -115,6 +121,41 @@ class Srb(commands.Cog):
         except Exception as e:
             self.bot.logging.error(e)
             await ctx.respond('An error has occurred')
+
+    @slash_command(description='List the next EU and US SRB windows')
+    async def srb_when(self, ctx):
+        try:
+            # Ensuring times are correct
+            now = int(str(datetime.datetime.now().timestamp()).split('.')[0])
+
+            startUS = self.startUS
+            endUS = self.endUS
+            startEU = self.startEU
+            endEU = self.endEU
+
+            # set time to next day if window has already passed
+            if now > self.endUS:
+                startUS += 86400
+                endUS += 86400
+            if now > self.endEU:
+                startEU += 86400
+                endEU += 86400
+
+            await ctx.respond(f'The next EU window starts at <t:{startEU}:t> and ends at <t:{endEU}:t> \nThe next US window starts at <t:{startUS}:t> and ends at <t:{endUS}:t>')
+        
+        except Exception as e:
+            self.bot.logging.error(e)
+            await ctx.respond('An error has occurred')
+    
+    @slash_command(description='Explain SRB')
+    async def srb_explain(self, ctx):
+        try:
+            await ctx.respond(f'SRB is an 8 vs 8 version of ground RB with a few other changes.```\n- You only get 1 spawn in SRB. No respawning.\n- Each team can spawn a maximum of 4 aircraft.\n- Only bomber aircraft get air spawns. This makes bombers very powerful.\n- Ground units can only detect friendly aircraft within 1 kilometer, and vice versa.\n``` The schedule for SRB is as follows:\n__EU__\n<t:{self.startEU}:t> - <t:{self.endEU}:t>\n\n__US__\n<t:{self.startUS}:t> - <t:{self.endUS}:t>\n\nWe will call through the srb-signup channel. Keep your notifications on.')
+
+        except Exception as e:
+            self.bot.logging.error(e)
+            await ctx.respond('An error has occurred')
+
 
 def setup(client):
     client.add_cog(Srb(client))
