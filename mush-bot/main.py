@@ -26,7 +26,7 @@ intents = discord.Intents().all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 if "mush-bot" not in os.getcwd().lower():
-    os.chdir(os.getcwd()+"/mush-bot")
+    os.chdir(os.getcwd()+"/Mush-Squadron/mush-bot")
 
 bot.join_message = ''
 
