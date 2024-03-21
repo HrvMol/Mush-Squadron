@@ -26,14 +26,14 @@ intents = discord.Intents().all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 if "mush-bot" not in os.getcwd().lower():
-    os.chdir(os.getcwd()+"/Mush-Squadron/mush-bot")
-    # os.chdir(os.getcwd()+"/mush-bot")
+    # os.chdir(os.getcwd()+"/Mush-Squadron/mush-bot")
+    os.chdir(os.getcwd()+"/mush-bot")
 
 bot.join_message = ''
 
 bot.settings = Settings
 
-logging.basicConfig(filename='app.log', format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%m-%y %H:%M:%S')
+logging.basicConfig(filename='app.log', format='%(asctime)s - %(levelname)s - %(funcName)s() - %(message)s', datefmt='%d-%m-%y %H:%M:%S')
 bot.logging = logging
 
 #token allows to sign in to the bot account

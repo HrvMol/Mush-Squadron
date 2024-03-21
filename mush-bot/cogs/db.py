@@ -143,8 +143,9 @@ def connect():
 
         return con, cur
 
-    except:
-        print("Could not connect to database")
+    except Exception as e:
+        print(e)
+        print('Could not connect to database')
 
 # Close the connection
 def close(con, cur):
