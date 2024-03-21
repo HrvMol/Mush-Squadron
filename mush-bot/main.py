@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# tells linux that it is a python file
+
 import discord
 from discord.ext import commands
 import os
@@ -68,5 +71,4 @@ async def test(ctx):
     await ctx.respond("Operational")
 
 #run bot
-# bot.run(TOKEN)
-bot.run('MTAwMTk5MjAyOTg2NzM2NDQ4NQ.GAzP7x.uOg-XvNcZj3HvQanx5WL3k_vrioXzb2Yi9D3dI')
+bot.run(TOKEN)
