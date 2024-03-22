@@ -132,7 +132,7 @@ class Db(commands.Cog):
 def connect():
     try:
         con = psycopg2.connect(
-            host='localhost',
+            host='127.0.0.1',
             port=5432,
             database='postgres',
             user='postgres',
