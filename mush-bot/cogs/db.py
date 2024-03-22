@@ -19,8 +19,6 @@ class Db(commands.Cog):
             # Checks if the author is a bot and ignores if true
             if ctx.author.bot:
                 return
-            
-            self.bot.settings.retrieveSetting('webscrape_interval_seconds')
                 
             # Connect to the database and iterate the number of messages sent
             con, cur = connect()
@@ -29,7 +27,7 @@ class Db(commands.Cog):
             con.commit()
             close(con, cur)
         except Exception as e:
-            # self.bot.logging.error(e)
+            self.bot.logging.error(e)
             pass
 
     # NOT TESTED YET
@@ -75,8 +73,8 @@ class Db(commands.Cog):
                 $do$
                 BEGIN
                 IF NOT EXISTS ( SELECT id FROM webscraper WHERE player = %(before)s ) THEN
-                    INSERT INTO webscraper ( player, messages_sent, vc_time, in_discord )
-                    VALUES ( %(player)s, %(messages_sent)s, %(vc_time)s, %(in_discord)s );
+                    INSERT INTO webscraper ( player, in_discord )
+                    VALUES ( %(player)s, %(in_discord)s );
                 ELSE 
                     UPDATE webscraper SET player = %(player)s, in_discord = %(in_discord)s WHERE player = %(before)s;
                 END IF;
@@ -91,13 +89,13 @@ class Db(commands.Cog):
             # Update role in db
             if before_roles[0] != after_roles[0]:
                 con, cur = connect()
-                cur.execute('UPDATE webscraper SET role = %s WHERE player = %s', (after_roles[0].name, after.display_name))
+                cur.execute('UPDATE webscraper SET role = %s, in_discord = %s WHERE player = %s', (after_roles[0].name, True, after.display_name))
 
                 con.commit()
                 close(con, cur)
         
         except Exception as e:
-            # self.bot.logging.error(e)
+            self.bot.logging.error(e)
             pass
 
     # Record time spent in VC
@@ -132,7 +130,7 @@ class Db(commands.Cog):
 def connect():
     try:
         con = psycopg2.connect(
-            host='127.0.0.1',
+            host='192.168.0.231',
             port=5432,
             database='postgres',
             user='postgres',

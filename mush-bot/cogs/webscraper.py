@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from cogs.db import connect, close
 
 class Webscraper(commands.Cog):
-    interval = 1
+    interval = 5
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -19,8 +19,8 @@ class Webscraper(commands.Cog):
     async def scraper(self):
         try:
             # retrieving the interval setting from the database
-            waitInterval = int(self.bot.settings.retrieveSetting('webscrape_interval_minutes'))
-            self.scraper.change_interval(minutes=waitInterval)
+            # waitInterval = int(self.bot.settings.retrieveSetting('webscrape_interval_minutes'))
+            # self.scraper.change_interval(minutes=waitInterval)
 
             # Configure driver to run Chrome headless
             options = webdriver.ChromeOptions()
@@ -97,7 +97,8 @@ class Webscraper(commands.Cog):
             # close the connection and cursor
             close(con, cur)
         
-        except:
+        except Exception as e:
+            print(e)
             pass
 
             # HOW TO FIND POSTGRES CONTAINER IP
