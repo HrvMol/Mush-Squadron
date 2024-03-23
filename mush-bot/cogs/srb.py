@@ -21,6 +21,8 @@ class Srb(commands.Cog):
     @commands.has_permissions(manage_messages = True)
     async def signup(self, ctx, br: discord.Option(str, description='Battle Rating'), window: discord.Option(str, description='SRB Window', choices=['US', 'EU']),):
         try:
+            await ctx.response.defer()
+            
             accepted_users = []
             declined_users = []
             tentative_users = []
@@ -114,12 +116,12 @@ class Srb(commands.Cog):
             button3.callback = button3_callback
 
             # Create view and add buttons
-            view = discord.ui.View(button1, button2, button3)
+            view = discord.ui.View(button1, button2, button3, timeout=None)
 
             msg = await ctx.respond(role.mention, embed=embed, view=view)
         
         except Exception as e:
-            self.bot.logging.error(e)
+            self.bot.logging.exception()
             await ctx.respond('An error has occurred')
 
     @slash_command(description='List the next EU and US SRB windows')
@@ -144,7 +146,7 @@ class Srb(commands.Cog):
             await ctx.respond(f'The next EU window starts at <t:{startEU}:t> and ends at <t:{endEU}:t> \nThe next US window starts at <t:{startUS}:t> and ends at <t:{endUS}:t>')
         
         except Exception as e:
-            self.bot.logging.error(e)
+            self.bot.logging.exception()
             await ctx.respond('An error has occurred')
     
     @slash_command(description='Explain SRB')
@@ -153,7 +155,7 @@ class Srb(commands.Cog):
             await ctx.respond(f'SRB is an 8 vs 8 version of ground RB with a few other changes.```\n- You only get 1 spawn in SRB. No respawning.\n- Each team can spawn a maximum of 4 aircraft.\n- Only bomber aircraft get air spawns. This makes bombers very powerful.\n- Ground units can only detect friendly aircraft within 1 kilometer, and vice versa.\n``` The schedule for SRB is as follows:\n__EU__\n<t:{self.startEU}:t> - <t:{self.endEU}:t>\n\n__US__\n<t:{self.startUS}:t> - <t:{self.endUS}:t>\n\nWe will call through the srb-signup channel. Keep your notifications on.')
 
         except Exception as e:
-            self.bot.logging.error(e)
+            self.bot.logging.exception()
             await ctx.respond('An error has occurred')
 
 

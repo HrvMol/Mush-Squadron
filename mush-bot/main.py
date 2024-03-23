@@ -33,7 +33,7 @@ bot.join_message = ''
 
 bot.settings = Settings
 
-logging.basicConfig(filename='app.log', format='%(asctime)s - %(levelname)s - %(funcName)s() - %(message)s', datefmt='%d-%m-%y %H:%M:%S')
+logging.basicConfig(filename='app.log', format='%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s() - %(message)s', datefmt='%d-%m-%y %H:%M:%S')
 bot.logging = logging
 
 #token allows to sign in to the bot account
