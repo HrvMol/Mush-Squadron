@@ -52,6 +52,7 @@ async def on_ready():
         bot.join_message = await file.read()
 
     print("logged in and ready")
+    bot.logging.critical('Bot started up')
 
 #on join function to send the new member form
 @bot.event
