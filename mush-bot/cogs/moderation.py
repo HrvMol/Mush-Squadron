@@ -19,7 +19,7 @@ class Moderation(commands.Cog):
             i = await ctx.channel.purge(limit = messages)
             await ctx.respond(f'I have purged {len(i)} messages')
         except Exception as e:
-            self.bot.logging.error(e)
+            self.bot.logging.exception('')
             await ctx.respond('An error has occurred')
 
     # @slash_command(description="update a setting")

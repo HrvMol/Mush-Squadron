@@ -9,11 +9,11 @@ class Webscraper(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.scraper.start()
     
     @commands.Cog.listener()
     async def on_ready(self):
         print("Webscraper Cog Loaded")
+        self.scraper.start()
     
     @tasks.loop(minutes=interval)
     async def scraper(self):
@@ -98,7 +98,7 @@ class Webscraper(commands.Cog):
             close(con, cur)
         
         except Exception as e:
-            print(e)
+            self.bot.logging.exception('')
             pass
 
             # HOW TO FIND POSTGRES CONTAINER IP
