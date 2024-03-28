@@ -1,6 +1,7 @@
-
+# FIND OUT HOW TO INSTALL FIREFOX ON SERVER TO USE IN HEADLESS MODE
 from discord.ext import tasks, commands
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 from cogs.db import connect, close
 
@@ -23,8 +24,13 @@ class Webscraper(commands.Cog):
             # self.scraper.change_interval(minutes=waitInterval)
 
             # Configure driver to run Chrome headless
-            options = webdriver.ChromeOptions()
-            options.add_argument("--headless=new")
+            # options = webdriver.ChromeOptions()
+            # options.add_argument("--headless=new")
+            # driver = webdriver.Chrome(options=options)
+
+            options = Options()
+            options.binary_location = '/usr/bin/chromium-browser'
+            options.add_argument('--headless')
             driver = webdriver.Chrome(options=options)
 
             con, cur = connect()
