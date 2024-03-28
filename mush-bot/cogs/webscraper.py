@@ -31,7 +31,8 @@ class Webscraper(commands.Cog):
 
             options = Options()
             options.add_argument('--headless')
-            driver = webdriver.Firefox(executable_path='/home/pi/.cargo/bin/geckodriver',options=options)
+            service = webdriver.FirefoxService(executable_path='/home/pi/.cargo/bin/geckodriver')
+            driver = webdriver.Firefox(options=options, service=service)
 
             con, cur = connect()
 
