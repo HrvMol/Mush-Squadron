@@ -2,6 +2,7 @@
 import logging
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from pyvirtualdisplay import Display
 
 from bs4 import BeautifulSoup
 from cogs.db import connect, close
@@ -18,6 +19,9 @@ try:
     # options.add_argument("--headless=new")
     # driver = webdriver.Chrome(options=options)
 
+    display = Display(visible=0, size=(800,600))
+    display.start()
+
     options = Options()
     options.add_argument('--headless')
     service = webdriver.FirefoxService(executable_path='/home/pi/.cargo/bin/geckodriver')
@@ -27,6 +31,8 @@ try:
 
     # Making a GET request
     driver.get("https://warthunder.com/en/community/claninfo/MUSH/")
+
+    display.stop()
 
     # Parsing the HTML
     soup = BeautifulSoup(driver.page_source, 'html.parser')
