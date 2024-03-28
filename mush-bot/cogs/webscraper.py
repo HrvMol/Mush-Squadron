@@ -1,8 +1,8 @@
 # FIND OUT HOW TO INSTALL FIREFOX ON SERVER TO USE IN HEADLESS MODE
 from discord.ext import tasks, commands
 from selenium import webdriver
-from selenium.webdriver.firefox.service import Service as FirefoxService
-from webdriver_manager.firefox import GeckoDriverManager
+from selenium.webdriver.firefox.options import Options
+
 from bs4 import BeautifulSoup
 from cogs.db import connect, close
 
@@ -29,9 +29,9 @@ class Webscraper(commands.Cog):
             # options.add_argument("--headless=new")
             # driver = webdriver.Chrome(options=options)
 
-            options = webdriver.FirefoxOptions()
+            options = Options()
             options.add_argument('--headless')
-            driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
+            driver = webdriver.Firefox(executable_path='/home/pi/.cargo/bin/geckodriver',options=options)
 
             con, cur = connect()
 
