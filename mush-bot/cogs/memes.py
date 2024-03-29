@@ -56,7 +56,7 @@ class Memes(commands.Cog):
     async def on_message(self, ctx):
         try:
             if '/cum' in ctx.content:
-                await ctx.author.timeout_for(datetime.timedelta(minutes=10))
+                await ctx.author.timeout_for(datetime.timedelta(minutes=10), reason='Engaging in forbidden activity')
         except Exception as e:
             self.bot.logging.exception('')
 
