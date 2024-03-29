@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord.commands import slash_command
 import random
+import datetime
 
 class Memes(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -50,6 +51,14 @@ class Memes(commands.Cog):
     @slash_command()
     async def economy(self, ctx):
         await ctx.respond('https://tenor.com/h83HQdByMTa.gif')
+
+    @commands.Cog.listener()
+    async def on_message(self, ctx):
+        try:
+            if '/cum' in ctx.content:
+                await ctx.author.timeout_for(datetime.timedelta(minutes=10))
+        except Exception as e:
+            self.bot.logging.exception('')
 
 def setup(client):
     client.add_cog(Memes(client))
