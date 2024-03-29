@@ -1,20 +1,14 @@
-import datetime
+from selenium.webdriver.firefox.options import Options
+from selenium import webdriver
+from bs4 import BeautifulSoup
 
-# US
-# end = int(datetime.datetime.strptime(f'{datetime.date.today()} 07:00', '%Y-%m-%d %H:%M').timestamp())
+options = Options()
+options.add_argument('--headless')
+service = webdriver.FirefoxService(executable_path='/home/pi/.cargo/bin/geckodriver')
+driver = webdriver.Firefox(options=options, service=service)
 
-# EU
-end = int(datetime.datetime.strptime(f'{datetime.date.today()} 22:00', '%Y-%m-%d %H:%M').timestamp())
+driver.get('https://google.com')
 
-now = int(str(datetime.datetime.now().timestamp()).split('.')[0])
-# now = int(datetime.datetime.strptime(f'{datetime.datetime.now()}', '%Y-%m-%d %H:%M').timestamp())
+soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-print(datetime.date.today())
-
-print(end)
-print(now)
-
-if now > end:
-    print('ended')
-if now < end:
-    print('running')
+print(soup)
