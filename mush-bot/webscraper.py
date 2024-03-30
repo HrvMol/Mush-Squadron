@@ -1,9 +1,6 @@
 # FIND OUT HOW TO INSTALL FIREFOX ON SERVER TO USE IN HEADLESS MODE
 import logging
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from pyvirtualdisplay import Display
-
+import requests
 from bs4 import BeautifulSoup
 from cogs.db import connect, close
 
@@ -14,28 +11,12 @@ try:
     # waitInterval = int(self.bot.settings.retrieveSetting('webscrape_interval_minutes'))
     # self.scraper.change_interval(minutes=waitInterval)
 
-    # Configure driver to run Chrome headless
-    # options = webdriver.ChromeOptions()
-    # options.add_argument("--headless=new")
-    # driver = webdriver.Chrome(options=options)
-
-    display = Display(visible=0, size=(800,600))
-    display.start()
-
-    options = Options()
-    options.add_argument('--headless')
-    service = webdriver.FirefoxService(executable_path='/home/pi/.cargo/bin/geckodriver')
-    driver = webdriver.Firefox(options=options, service=service)
+    r = requests.get("https://warthunder.com/en/community/claninfo/MUSH/")
 
     con, cur = connect()
 
-    # Making a GET request
-    driver.get("https://warthunder.com/en/community/claninfo/MUSH/")
-
-    display.stop()
-
     # Parsing the HTML
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    soup = BeautifulSoup(r.content, 'html.parser')
 
     # Get all users from table
     s = soup.find('div', class_="squadrons-members__table")
