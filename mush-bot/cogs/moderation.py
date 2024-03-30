@@ -26,97 +26,53 @@ class Moderation(commands.Cog):
             self.bot.logging.exception('')
             await ctx.respond('An error has occurred')
 
-    @slash_command(description="Display a list of the order in which members should be removed from the squadron")
-    @commands.has_permissions(administrator = True)
-    async def removal_list(self, ctx):
-        try:
-            itemsPerPage=10
-            my_pages=[]
-            
-            # PLACEHOLDER
-            names=['MUDD (geckos daddy)', 'Staem1', 'wall763abrasive', 'TOTOINOZ', 'MrTacoDoesGames', 'arnobvo', 'WOLFPACK0581869', 'Ph4atomPB', 'Tcrawl4539', 'blondiefrodo', 'geckojesus', 'briocheman21', 'header1234', 'youssef_18', 'Jhozep', 'MeatisOmalley', '_Zr0_', 'chogchey', 'fams_4', 'DDawg', 'Jadjood']
+    # @slash_command(description="Display a list of the order in which members should be removed from the squadron")
+    # @commands.has_permissions(administrator = True)
+    # async def removal_list(self, ctx):
+    #     try:
+    #         # get data
+    #         my_pages = CreateEmbed('SELECT player FROM webscraper WHERE ', (False, True))
+    #         view = PaginationView()
 
-            for i in range(0, len(names), itemsPerPage):
-                pageNames=''
-                page = discord.Embed(
-                title=f'Removal List',
-                color=discord.Colour.from_rgb(255, 255, 255)
-                )
+    #         # set start info
+    #         currentPage = 1
+    #         finalPage = 12
 
-                for j in range(0, len(names[i:i+itemsPerPage])):
-                    pageNames += f'`{names[i:i+itemsPerPage][j]}`'
-                    pageNames += '\n'
+    #         button = discord.ui.Button(label=f'{currentPage} / {finalPage}')
+    #         button.disabled = True
 
-                page.add_field(name='Member', value=pageNames, inline=True)
-                my_pages.append(page)
+    #         # put page button in the middle of the 1st row
+    #         midpoint = len(view.children)//4
+    #         view.children = view.children[0:midpoint] + [button] + view.children[midpoint:] 
 
-            paginator = Paginator(pages=my_pages)
-            await paginator.respond(ctx.interaction, ephemeral=False)
-        except Exception as e:
-            self.bot.logging.exception('')
-            await ctx.respond('An error has occurred')
+    #         await ctx.respond(embed=my_pages[1], view=view)
+    #     except:
+    #         self.bot.logging.exception('')
+    #         await ctx.respond('An error has occurred')
 
     @slash_command(description="Display the list of people who are not in the discord")
     @commands.has_permissions(administrator = True)
     async def recruitment(self, ctx):
-        # try:
-        #     itemsPerPage=10
-        #     my_pages=[]
+        try:
+            # get data
+            my_pages = CreateEmbed('SELECT player FROM webscraper WHERE (in_discord IS NULL or in_discord = %s) and in_squadron = %s ORDER BY entry_date DESC;', (False, True))
+            view = PaginationView()
 
-        #     # retrive users from database
-        #     con, cur = connect()
-        #     cur.execute('SELECT player FROM webscraper WHERE (in_discord IS NULL or in_discord = %s) and in_squadron = %s ORDER BY entry_date DESC;', (False, True))
-        #     names = cur.fetchall()
-        #     close(con, cur)
+            # set start info
+            currentPage = 1
+            finalPage = 12
 
-        #     # turn the array into pages for the 
-        #     for i in range(0, len(names), itemsPerPage):
-        #         pageNames=''
-        #         page = discord.Embed(
-        #         title=f'Recruitment List',
-        #         color=discord.Colour.from_rgb(255, 255, 255)
-        #         )
+            button = discord.ui.Button(label=f'{currentPage} / {finalPage}')
+            button.disabled = True
 
-        #         for j in range(0, len(names[i:i+itemsPerPage])):
-        #             pageNames += f'`{names[i:i+itemsPerPage][j][0]}`'
-        #             pageNames += '\n'
+            # put page button in the middle of the 1st row
+            midpoint = len(view.children)//4
+            view.children = view.children[0:midpoint] + [button] + view.children[midpoint:] 
 
-        #         page.add_field(name='Member', value=pageNames, inline=True)
-        #         my_pages.append(page)
-
-
-        #     # set up buttons
-        #     paginator = Paginator(pages=my_pages)
-        #     paginator.remove_button("first")
-        #     paginator.remove_button("last")
-        #     paginator.add_button(PaginatorButton("Refresh", label="⟳", style=discord.ButtonStyle.blurple))
-
-        #     await paginator.respond(ctx.interaction, ephemeral=False)
-        # except Exception as e:
-        #     self.bot.logging.exception('')
-        #     await ctx.respond('An error has occurred')
-
-
-        my_pages = CreateEmbed('SELECT player FROM webscraper WHERE (in_discord IS NULL or in_discord = %s) and in_squadron = %s ORDER BY entry_date DESC;', (False, True))
-        view = PaginationView()
-
-        
-
-        currentPage = 1
-        finalPage = 12
-
-        button = discord.ui.Button(label=f'{currentPage} / {finalPage}')
-        button.disabled = True
-
-        midpoint = len(view.children)//2
-        view.children = view.children[0:midpoint] + [button] + view.children[midpoint:] 
-
-
-        # view.children.append(view.children[1])
-        # view.children[1] = button
-        # print(view.children)
-        await ctx.respond(embed=my_pages[1], view=view)
-
+            await ctx.respond(embed=my_pages[1], view=view)
+        except:
+            self.bot.logging.exception('')
+            await ctx.respond('An error has occurred')
 
     # @slash_command(description="update a setting")
     # async def settings(self, ctx):
@@ -126,101 +82,60 @@ class Moderation(commands.Cog):
 class PaginationView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
+        # retrieve data from database
         self.embed = CreateEmbed('SELECT player FROM webscraper WHERE (in_discord IS NULL or in_discord = %s) and in_squadron = %s ORDER BY entry_date DESC;', (False, True))
 
     @discord.ui.button(label='<<', custom_id='first', style=discord.ButtonStyle.blurple)
     async def button1_callback(self, button, interaction):
+        # setting current page
         currentPage = 1
-        finalPage = int(interaction.message.components[0].children[2].label.split('/')[1].strip())
         
-        button3 = discord.ui.Button(label=f'{currentPage} / {finalPage}')
-        button3.disabled = True
-
-        view = PaginationView()
-        midpoint = len(view.children)//2
-        view.children = view.children[0:midpoint] + [button3] + view.children[midpoint:] 
-
-        if currentPage == finalPage:
-            view.children[3].disabled = True
-            view.children[4].disabled = True
-        elif currentPage == 1:
-            view.children[0].disabled = True
-            view.children[1].disabled = True
-
-        await interaction.message.edit(embed=self.embed[currentPage], view=view)
-        await interaction.response.edit_message()
+        await handleButtons(self, interaction, currentPage)
         
     @discord.ui.button(label='<', custom_id='prev', style=discord.ButtonStyle.red)
     async def button2_callback(self, button, interaction):
+        # setting current page
         currentPage = int(interaction.message.components[0].children[2].label.split('/')[0].strip()) - 1
-        finalPage = int(interaction.message.components[0].children[2].label.split('/')[1].strip())
         
-        button3 = discord.ui.Button(label=f'{currentPage} / {finalPage}')
-        button3.disabled = True
-
-        view = PaginationView()
-        midpoint = len(view.children)//2
-        view.children = view.children[0:midpoint] + [button3] + view.children[midpoint:] 
-
-        if currentPage == finalPage:
-            view.children[3].disabled = True
-            view.children[4].disabled = True
-        elif currentPage == 1:
-            view.children[0].disabled = True
-            view.children[1].disabled = True
-
-        await interaction.message.edit(embed=self.embed[currentPage], view=view)
-        await interaction.response.edit_message()
+        await handleButtons(self, interaction, currentPage)
 
     @discord.ui.button(label='>', custom_id='next', style=discord.ButtonStyle.green)
     async def button4_callback(self, button, interaction):
+        # setting current page
         currentPage = int(interaction.message.components[0].children[2].label.split('/')[0].strip()) + 1
-        finalPage = int(interaction.message.components[0].children[2].label.split('/')[1].strip())
-
-        button3 = discord.ui.Button(label=f'{currentPage} / {finalPage}')
-        button3.disabled = True
-
-        view = PaginationView()
-        midpoint = len(view.children)//2
-        view.children = view.children[0:midpoint] + [button3] + view.children[midpoint:] 
-
-        if currentPage == finalPage:
-            view.children[3].disabled = True
-            view.children[4].disabled = True
-        elif currentPage == 1:
-            view.children[0].disabled = True
-            view.children[1].disabled = True
-
-        print(view.children)
-
-        await interaction.message.edit(embed=self.embed[currentPage], view=view)
-        await interaction.response.edit_message()
-
-    
+        
+        await handleButtons(self, interaction, currentPage)
     
     @discord.ui.button(label='>>', custom_id='last', style=discord.ButtonStyle.blurple)
     async def button5_callback(self, button, interaction):
+        # setting current page
         finalPage = int(interaction.message.components[0].children[2].label.split('/')[1].strip())
         currentPage = finalPage
         
-        button3 = discord.ui.Button(label=f'{currentPage} / {finalPage}')
-        button3.disabled = True
+        await handleButtons(self, interaction, currentPage)
 
-        view = PaginationView()
-        midpoint = len(view.children)//2
-        view.children = view.children[0:midpoint] + [button3] + view.children[midpoint:] 
+    @discord.ui.button(label='​', custom_id='space1', row=1, disabled=True)
+    async def space1_callback():
+        print()
 
-        if currentPage == finalPage:
-            view.children[3].disabled = True
-            view.children[4].disabled = True
-        elif currentPage == 1:
-            view.children[0].disabled = True
-            view.children[1].disabled = True
+    @discord.ui.button(label='​', custom_id='space2', row=1, disabled=True)
+    async def space2_callback():
+        print()
 
-        await interaction.message.edit(embed=self.embed[currentPage], view=view)
-        await interaction.response.edit_message()
+    @discord.ui.button(label='↻', custom_id='refresh', row=1, style=discord.ButtonStyle.blurple)
+    async def button6_callback(self, button, interaction):
+        # setting current page
+        currentPage = int(interaction.message.components[0].children[2].label.split('/')[0].strip())
 
+        await handleButtons(self, interaction, currentPage)
 
+    @discord.ui.button(label='​', custom_id='space3', row=1, disabled=True)
+    async def space3_callback():
+        print()
+
+    @discord.ui.button(label='​', custom_id='space4', row=1, disabled=True)
+    async def space4_callback():
+        print()
 
 def CreateEmbed(sql, data):
     itemsPerPage=10
@@ -232,7 +147,7 @@ def CreateEmbed(sql, data):
     names = cur.fetchall()
     close(con, cur)
 
-    # turn the array into pages for the 
+    # turn the array into pages of embeds
     for i in range(0, len(names), itemsPerPage):
         pageNames=''
         page = discord.Embed(
@@ -240,14 +155,43 @@ def CreateEmbed(sql, data):
         color=discord.Colour.from_rgb(255, 255, 255)
         )
 
+        # add names to list
         for j in range(0, len(names[i:i+itemsPerPage])):
             pageNames += f'`{names[i:i+itemsPerPage][j][0]}`'
             pageNames += '\n'
 
+        # add list to embed and return page
         page.add_field(name='Member', value=pageNames, inline=True)
         my_pages.append(page)
     
+    # returns an array of embeds
     return my_pages
+
+async def handleButtons(self, interaction, currentPage):
+    # set final page
+    finalPage = int(interaction.message.components[0].children[2].label.split('/')[1].strip())
+    
+    # create the button that shows page number
+    button3 = discord.ui.Button(label=f'{currentPage} / {finalPage}')
+    button3.disabled = True
+
+    # insert the page number button in the middle of all the buttons
+    view = PaginationView()
+    midpoint = len(view.children)//4
+    view.children = view.children[0:midpoint] + [button3] + view.children[midpoint:] 
+
+    # disable buttons when at min/max values to prevent overflow
+    if currentPage == finalPage:
+        view.children[3].disabled = True
+        view.children[4].disabled = True
+    elif currentPage == 1:
+        view.children[0].disabled = True
+        view.children[1].disabled = True
+
+    # update message
+    await interaction.message.edit(embed=self.embed[currentPage], view=view)
+    # prevent interaction failed error
+    await interaction.response.edit_message()
 
 
 def setup(client):

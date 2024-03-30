@@ -72,8 +72,7 @@ try:
     cur.execute('UPDATE webscraper SET in_squadron = False WHERE NOT (player = ANY (%s));', (players_in_squad,))
 
     # remove users who are no longer part of the squadron in game.
-    # NEED TO UPDATE TO ONLY REMOVE IF USER IS NOT IN DISCORD AND IN GAME
-    cur.execute('DELETE FROM webscraper WHERE in_discord=%s AND in_squadron=%s;', (False,False))
+    cur.execute('DELETE FROM webscraper WHERE (in_discord=%s OR in_discord IS null) AND in_squadron=%s;', (False,False))
 
 
     con.commit()

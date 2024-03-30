@@ -1,7 +1,9 @@
 import discord
+from discord.commands import slash_command
 from discord.ext import commands
 import psycopg2
 from datetime import datetime
+import os
 
 class Db(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -35,9 +37,6 @@ class Db(commands.Cog):
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member):
         try:
-            if member.bot:
-                return
-                
             # Connect to the database and iterate the number of messages sent
             con, cur = connect()
             cur.execute('UPDATE webscraper SET in_discord=%s WHERE player=%s;', (False, member.display_name))
@@ -55,7 +54,8 @@ class Db(commands.Cog):
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
         try:
-
+            if before.bot:
+                return
             # For some reason it doesnt allow it condensed down
             before_roles = before.roles
             before_roles.reverse()
@@ -103,9 +103,12 @@ class Db(commands.Cog):
     async def on_voice_state_update(self, member, before, after):
         try:
             if before.channel != after.channel:
+                print('done1')
                 if before.channel == None:
+                    print('done2')
                     self.vc.update({member.display_name: datetime.now()})
                 else:
+                    print('done3')
                     # pop member from dictionary and get delta time
                     joined = self.vc.pop(member.display_name)
                     difference = datetime.now() - joined
@@ -123,14 +126,34 @@ class Db(commands.Cog):
         except Exception as e:
             self.bot.logging.exception('')
             pass
+    
+    @slash_command(description="Force an update of the entire database")
+    async def update_database(self, ctx):
+        await ctx.response.defer()
+        try:
+            for member in ctx.guild.members:
+                memberRole = member.roles[::-1][0]
+                print(member.display_name, memberRole.name)
 
+                con, cur = connect()
+                cur.execute('UPDATE webscraper SET role = %s, in_discord = %s WHERE player = %s', (memberRole.name, True, member.display_name))
+
+                con.commit()
+                close(con, cur)
+            
+            os.system('python ./webscraper.py')
+            
+            await ctx.respond('Updated Database')
+
+        except Exception as e:
+            await ctx.respond("Error")
     
 
 # Creates connection to the database
 def connect():
     try:
         con = psycopg2.connect(
-            host='192.168.0.231',
+            host='localhost',
             port=5432,
             database='postgres',
             user='postgres',
