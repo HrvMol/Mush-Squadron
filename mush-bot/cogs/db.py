@@ -154,7 +154,10 @@ class Db(commands.Cog):
         embed.add_field(name='SRB Points', value=f'`{userData[0]}`')
         embed.add_field(name='Activity', value=f'`{userData[1]}`')
         embed.add_field(name='Messages Sent', value=f'`{userData[4]}`')
-        embed.add_field(name='Time in VC', value=f'`{str(timedelta(seconds=userData[5]))}`')
+
+        if userData[5] == None: embed.add_field(name='Time in VC', value='`None`')
+        else: embed.add_field(name='Time in VC', value=f'`{str(timedelta(seconds=userData[5]))}`')
+
         convertedDate = userData[3].strftime('%d/%m/%Y')
         embed.add_field(name='Date Joined', value=f'`{convertedDate}`')
 
