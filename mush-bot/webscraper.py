@@ -56,7 +56,7 @@ try:
             INSERT INTO webscraper ( player, clan_rating, activity, entry_date, messages_sent, vc_time, in_squadron )
             VALUES ( %(name)s, %(clan_rating)s, %(activity)s, %(entry_date)s, %(messages_sent)s, %(vc_time)s, %(in_squadron)s );
         ELSE 
-            UPDATE webscraper SET player = %(name)s, clan_rating = %(clan_rating)s, activity = %(activity)s, in_squadron = %(in_squadron)s WHERE player = %(name)s;
+            UPDATE webscraper SET player = %(name)s, clan_rating = %(clan_rating)s, activity = %(activity)s, entry_date =%(entry_date)s, in_squadron = %(in_squadron)s WHERE player = %(name)s;
         END IF;
         end;
         $do$
