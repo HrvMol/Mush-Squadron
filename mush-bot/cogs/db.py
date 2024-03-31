@@ -133,7 +133,8 @@ class Db(commands.Cog):
         try:
             databaseUpdate()
             await ctx.respond('Updated Database')
-        except Exception as e:
+        except:
+            self.bot.logging.exception('')
             await ctx.respond("Error")
 
     @slash_command(description="View the information on a member")
