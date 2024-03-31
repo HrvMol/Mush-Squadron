@@ -163,15 +163,15 @@ class Db(commands.Cog):
         await ctx.respond(embed=embed)
         
 def databaseUpdate(ctx):
+    con, cur = connect()
     for member in ctx.guild.members:
         memberRole = member.roles[::-1][0]
         print(member.display_name, memberRole.name)
-
-        con, cur = connect()
+        
         cur.execute('UPDATE webscraper SET role = %s, in_discord = %s WHERE player = %s', (memberRole.name, True, member.display_name))
 
-        con.commit()
-        close(con, cur)
+    con.commit()
+    close(con, cur)
     
     os.system('python ./webscraper.py')
 
