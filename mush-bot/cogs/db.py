@@ -131,7 +131,7 @@ class Db(commands.Cog):
     async def update_database(self, ctx):
         await ctx.response.defer()
         try:
-            databaseUpdate()
+            databaseUpdate(ctx)
             await ctx.respond('Updated Database')
         except:
             self.bot.logging.exception('')
