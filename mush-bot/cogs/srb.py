@@ -19,7 +19,7 @@ class Srb(commands.Cog):
 
     @slash_command(description="Create a signup embed for squadron battles.")
     @commands.has_permissions(manage_messages = True)
-    async def signup(self, ctx, br: discord.Option(str, description='Battle Rating'), window: discord.Option(str, description='SRB Window', choices=['US', 'EU']),):
+    async def signup(self, ctx, br: discord.Option(str, description='Battle Rating'), window: discord.Option(str, description='SRB Window', choices=['US', 'EU']),): # type: ignore
         try:
             await ctx.response.defer()
             

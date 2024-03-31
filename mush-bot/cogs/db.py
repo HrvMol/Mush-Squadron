@@ -2,7 +2,7 @@ import discord
 from discord.commands import slash_command
 from discord.ext import commands
 import psycopg2
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 
 class Db(commands.Cog):
@@ -131,29 +131,54 @@ class Db(commands.Cog):
     async def update_database(self, ctx):
         await ctx.response.defer()
         try:
-            for member in ctx.guild.members:
-                memberRole = member.roles[::-1][0]
-                print(member.display_name, memberRole.name)
-
-                con, cur = connect()
-                cur.execute('UPDATE webscraper SET role = %s, in_discord = %s WHERE player = %s', (memberRole.name, True, member.display_name))
-
-                con.commit()
-                close(con, cur)
-            
-            os.system('python ./webscraper.py')
-            
+            databaseUpdate()
             await ctx.respond('Updated Database')
-
         except Exception as e:
             await ctx.respond("Error")
+
+    @slash_command(description="View the information on a member")
+    async def stats(self, ctx, member: discord.Option(discord.Member, description='User you would like to see')): # type: ignore
+        # retrieve data from database
+        con, cur = connect()
+        cur.execute('SELECT clan_rating, activity, role, entry_date, messages_sent, vc_time FROM webscraper WHERE player = %s', (member.display_name,))
+        userData = cur.fetchone()
+        close(con, cur)
+
+        embed = discord.Embed(title=member.display_name, description=f'`{userData[2]}`', color=discord.Colour.from_rgb(255, 255, 255))
+
+        # BE WARNED THIS CONTAINS \u200b ZERO WIDTH CHARACTER
+        embed.add_field(name='\n ​', value='\n ​', inline=False)
+
+        # add fields for all the data
+        embed.add_field(name='SRB Points', value=f'`{userData[0]}`')
+        embed.add_field(name='Activity', value=f'`{userData[1]}`')
+        embed.add_field(name='Messages Sent', value=f'`{userData[4]}`')
+        embed.add_field(name='Time in VC', value=f'`{str(timedelta(seconds=userData[5]))}`')
+        convertedDate = userData[3].strftime('%d/%m/%Y')
+        embed.add_field(name='Date Joined', value=f'`{convertedDate}`')
+
+        embed.set_thumbnail(url=member.avatar)
+
+        await ctx.respond(embed=embed)
+        
+def databaseUpdate(ctx):
+    for member in ctx.guild.members:
+        memberRole = member.roles[::-1][0]
+        print(member.display_name, memberRole.name)
+
+        con, cur = connect()
+        cur.execute('UPDATE webscraper SET role = %s, in_discord = %s WHERE player = %s', (memberRole.name, True, member.display_name))
+
+        con.commit()
+        close(con, cur)
     
+    os.system('python ./webscraper.py')
 
 # Creates connection to the database
 def connect():
     try:
         con = psycopg2.connect(
-            host='localhost',
+            host='192.168.0.231',
             port=5432,
             database='postgres',
             user='postgres',

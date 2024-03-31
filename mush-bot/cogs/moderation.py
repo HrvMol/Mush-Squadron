@@ -2,8 +2,7 @@ import discord
 from discord import Option
 from discord.ext import commands
 from discord.commands import slash_command
-from discord.ext.pages import Paginator, PaginatorButton
-from cogs.db import connect, close
+from cogs.db import connect, close, databaseUpdate
 
 class Moderation(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -89,21 +88,18 @@ class PaginationView(discord.ui.View):
     async def button1_callback(self, button, interaction):
         # setting current page
         currentPage = 1
-        
         await handleButtons(self, interaction, currentPage)
         
     @discord.ui.button(label='<', custom_id='prev', style=discord.ButtonStyle.red)
     async def button2_callback(self, button, interaction):
         # setting current page
         currentPage = int(interaction.message.components[0].children[2].label.split('/')[0].strip()) - 1
-        
         await handleButtons(self, interaction, currentPage)
 
     @discord.ui.button(label='>', custom_id='next', style=discord.ButtonStyle.green)
     async def button4_callback(self, button, interaction):
         # setting current page
         currentPage = int(interaction.message.components[0].children[2].label.split('/')[0].strip()) + 1
-        
         await handleButtons(self, interaction, currentPage)
     
     @discord.ui.button(label='>>', custom_id='last', style=discord.ButtonStyle.blurple)
@@ -111,28 +107,31 @@ class PaginationView(discord.ui.View):
         # setting current page
         finalPage = int(interaction.message.components[0].children[2].label.split('/')[1].strip())
         currentPage = finalPage
-        
         await handleButtons(self, interaction, currentPage)
 
+    # BE WARNED THIS CONTAINS \u200b ZERO WIDTH CHARACTER
     @discord.ui.button(label='​', custom_id='space1', row=1, disabled=True)
     async def space1_callback():
         print()
-
+    # BE WARNED THIS CONTAINS \u200b ZERO WIDTH CHARACTER
     @discord.ui.button(label='​', custom_id='space2', row=1, disabled=True)
     async def space2_callback():
         print()
 
     @discord.ui.button(label='↻', custom_id='refresh', row=1, style=discord.ButtonStyle.blurple)
     async def button6_callback(self, button, interaction):
+        # Not necessary as war thunder's website takes a long time to update
+        # databaseUpdate(interaction)
+
         # setting current page
         currentPage = int(interaction.message.components[0].children[2].label.split('/')[0].strip())
-
         await handleButtons(self, interaction, currentPage)
-
+        
+    # BE WARNED THIS CONTAINS \u200b ZERO WIDTH CHARACTER
     @discord.ui.button(label='​', custom_id='space3', row=1, disabled=True)
     async def space3_callback():
         print()
-
+    # BE WARNED THIS CONTAINS \u200b ZERO WIDTH CHARACTER
     @discord.ui.button(label='​', custom_id='space4', row=1, disabled=True)
     async def space4_callback():
         print()
