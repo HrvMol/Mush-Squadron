@@ -162,7 +162,7 @@ class Db(commands.Cog):
     async def stats(self, ctx, member: discord.Option(discord.Member, description='User you would like to see')): # type: ignore
         # retrieve data from database
         con, cur = connect()
-        cur.execute('SELECT clan_rating, activity, role, entry_date, messages_sent, vc_time FROM webscraper WHERE player = %s', (member.display_name,))
+        cur.execute('SELECT clan_rating, activity, role, entry_date, messages_sent, vc_time FROM webscraper WHERE discord_id = %s;', (member.id,))
         userData = cur.fetchone()
         close(con, cur)
 
