@@ -24,7 +24,7 @@ class Db(commands.Cog):
                 
             # Connect to the database and iterate the number of messages sent
             con, cur = connect()
-            cur.execute('UPDATE webscraper SET messages_sent = messages_sent + 1 WHERE player=%s;', (ctx.author.display_name,))
+            cur.execute('UPDATE webscraper SET messages_sent = messages_sent + 1 WHERE discord_id = %s;', (ctx.author.id,))
 
             con.commit()
             close(con, cur)
@@ -39,7 +39,7 @@ class Db(commands.Cog):
         try:
             # Connect to the database and iterate the number of messages sent
             con, cur = connect()
-            cur.execute('UPDATE webscraper SET in_discord=%s WHERE player=%s;', (False, member.display_name))
+            cur.execute('UPDATE webscraper SET in_discord=%s WHERE discord_id = %s;', (False, member.id))
 
             con.commit()
             close(con, cur)
@@ -67,21 +67,42 @@ class Db(commands.Cog):
             if before.display_name != after.display_name:
                 con, cur = connect()
 
-                # Create new entry if name is not in table, else update with old data.
+                print(after.id)
+
+                # Create new entry if name is not in table, else if user is not in squadron allow them to edit their name in db.
                 sql = '''
                 DO
                 $do$
                 BEGIN
-                IF NOT EXISTS ( SELECT id FROM webscraper WHERE player = %(before)s ) THEN
-                    INSERT INTO webscraper ( player, in_discord )
-                    VALUES ( %(player)s, %(in_discord)s );
-                ELSE 
-                    UPDATE webscraper SET player = %(player)s, in_discord = %(in_discord)s WHERE player = %(before)s;
+                IF NOT EXISTS ( SELECT id FROM webscraper WHERE discord_id = %(discord_id)s ) THEN
+                    INSERT INTO webscraper ( player, role, messages_sent, vc_time, in_discord, discord_id )
+                    VALUES ( %(player)s, %(role)s, %(messages_sent)s, %(vc_time)s, %(in_discord)s, %(discord_id)s );
+                ELSEIF EXISTS ( SELECT id FROM webscraper WHERE player = %(before)s AND (in_squadron IS null OR in_squadron = false) ) THEN
+                    UPDATE webscraper SET player = %(player)s, in_discord = %(in_discord)s, discord_id = %(discord_id)s WHERE player = %(before)s;
                 END IF;
                 end;
                 $do$
                 '''
-                cur.execute(sql, {'before': before.display_name, 'player': after.display_name, 'messages_sent': 0, 'vc_time': 0, 'in_discord': True})
+                cur.execute(sql, {'before': before.display_name, 'player': after.display_name, 'role':after_roles[0].name, 'messages_sent': 0, 'vc_time': 0, 'in_discord': True, 'discord_id': after.id})
+
+                # removing duplicate entries in database
+                cur.execute('''
+                    DELETE FROM webscraper
+                    WHERE CONCAT(player,messages_sent) NOT IN 
+                        (
+                        SELECT CONCAT(player,MAX(messages_sent))
+                        FROM webscraper
+                        GROUP BY player
+                        );
+                    
+                    DELETE FROM webscraper
+                    WHERE CONCAT(player,id) NOT IN 
+                        (
+                        SELECT CONCAT(player,MAX(id))
+                        FROM webscraper
+                        GROUP BY player
+                        );
+                    ''')
 
                 con.commit()
                 close(con, cur)
@@ -89,7 +110,7 @@ class Db(commands.Cog):
             # Update role in db
             if before_roles[0] != after_roles[0]:
                 con, cur = connect()
-                cur.execute('UPDATE webscraper SET role = %s, in_discord = %s WHERE player = %s', (after_roles[0].name, True, after.display_name))
+                cur.execute('UPDATE webscraper SET role = %s, in_discord = %s WHERE discord_id = %s', (after_roles[0].name, True, after.id))
 
                 con.commit()
                 close(con, cur)
@@ -108,7 +129,6 @@ class Db(commands.Cog):
                     print('done2')
                     self.vc.update({member.display_name: datetime.now()})
                 else:
-                    print('done3')
                     # pop member from dictionary and get delta time
                     joined = self.vc.pop(member.display_name)
                     difference = datetime.now() - joined
@@ -118,10 +138,11 @@ class Db(commands.Cog):
 
                     # NOT TESTED YET
                     con, cur = connect()
-                    cur.execute('UPDATE webscraper SET vc_time=vc_time+%s WHERE player=%s;', (seconds, member.display_name))
+                    cur.execute('UPDATE webscraper SET vc_time=vc_time+%s WHERE discord_id = %s;', (seconds, member.id))
 
                     con.commit()
                     close(con, cur)
+                    print('done3')
                     
         except Exception as e:
             self.bot.logging.exception('')
@@ -170,8 +191,11 @@ def databaseUpdate(ctx):
     for member in ctx.guild.members:
         memberRole = member.roles[::-1][0]
         print(member.display_name, memberRole.name)
-        
-        cur.execute('UPDATE webscraper SET role = %s, in_discord = %s WHERE player = %s', (memberRole.name, True, member.display_name))
+
+        cur.execute('''
+                    UPDATE webscraper SET discord_id = %(discord_id)s WHERE player = %(name)s;
+                    UPDATE webscraper SET role = %(role)s, in_discord = %(in_discord)s WHERE discord_id = %(discord_id)s;
+                    ''', {'role': memberRole.name, 'in_discord': True, 'discord_id': member.id, 'name': member.display_name})
 
     con.commit()
     close(con, cur)
@@ -182,7 +206,8 @@ def databaseUpdate(ctx):
 def connect():
     try:
         con = psycopg2.connect(
-            host='192.168.0.231',
+            # host='192.168.0.231',
+            host='localhost',
             port=5432,
             database='postgres',
             user='postgres',

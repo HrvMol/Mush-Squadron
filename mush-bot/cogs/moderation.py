@@ -54,12 +54,12 @@ class Moderation(commands.Cog):
     async def recruitment(self, ctx):
         try:
             # get data
-            my_pages = CreateEmbed('SELECT player FROM webscraper WHERE (in_discord IS NULL or in_discord = %s) and in_squadron = %s ORDER BY entry_date DESC;', (False, True))
+            embed = CreateEmbed('SELECT player FROM webscraper WHERE (in_discord IS NULL or in_discord = %s) and in_squadron = %s ORDER BY entry_date DESC;', (False, True))
             view = PaginationView()
 
             # set start info
             currentPage = 1
-            finalPage = 12
+            finalPage = len(embed)
 
             button = discord.ui.Button(label=f'{currentPage} / {finalPage}')
             button.disabled = True
@@ -68,7 +68,7 @@ class Moderation(commands.Cog):
             midpoint = len(view.children)//4
             view.children = view.children[0:midpoint] + [button] + view.children[midpoint:] 
 
-            await ctx.respond(embed=my_pages[1], view=view)
+            await ctx.respond(embed=embed[1], view=view)
         except:
             self.bot.logging.exception('')
             await ctx.respond('An error has occurred')
@@ -81,33 +81,31 @@ class Moderation(commands.Cog):
 class PaginationView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
-        # retrieve data from database
-        self.embed = CreateEmbed('SELECT player FROM webscraper WHERE (in_discord IS NULL or in_discord = %s) and in_squadron = %s ORDER BY entry_date DESC;', (False, True))
 
     @discord.ui.button(label='<<', custom_id='first', style=discord.ButtonStyle.blurple)
     async def button1_callback(self, button, interaction):
         # setting current page
-        currentPage = 1
-        await handleButtons(self, interaction, currentPage)
+        nextPage = 1
+        await handleButtons(self, interaction, nextPage)
         
     @discord.ui.button(label='<', custom_id='prev', style=discord.ButtonStyle.red)
     async def button2_callback(self, button, interaction):
         # setting current page
-        currentPage = int(interaction.message.components[0].children[2].label.split('/')[0].strip()) - 1
-        await handleButtons(self, interaction, currentPage)
+        nextPage = int(interaction.message.components[0].children[2].label.split('/')[0].strip()) - 1
+        await handleButtons(self, interaction, nextPage)
 
     @discord.ui.button(label='>', custom_id='next', style=discord.ButtonStyle.green)
     async def button4_callback(self, button, interaction):
         # setting current page
-        currentPage = int(interaction.message.components[0].children[2].label.split('/')[0].strip()) + 1
-        await handleButtons(self, interaction, currentPage)
+        nextPage = int(interaction.message.components[0].children[2].label.split('/')[0].strip()) + 1
+        await handleButtons(self, interaction, nextPage)
     
     @discord.ui.button(label='>>', custom_id='last', style=discord.ButtonStyle.blurple)
     async def button5_callback(self, button, interaction):
         # setting current page
         finalPage = int(interaction.message.components[0].children[2].label.split('/')[1].strip())
-        currentPage = finalPage
-        await handleButtons(self, interaction, currentPage)
+        nextPage = finalPage
+        await handleButtons(self, interaction, nextPage)
 
     # BE WARNED THIS CONTAINS \u200b ZERO WIDTH CHARACTER
     @discord.ui.button(label='​', custom_id='space1', row=1, disabled=True)
@@ -151,6 +149,7 @@ def CreateEmbed(sql, data):
         pageNames=''
         page = discord.Embed(
         title=f'Recruitment List',
+        description='It takes a while for War Thunder to update the database.\nBe patient when refreshing doesnt update it instantly.',
         color=discord.Colour.from_rgb(255, 255, 255)
         )
 
@@ -159,6 +158,8 @@ def CreateEmbed(sql, data):
             pageNames += f'`{names[i:i+itemsPerPage][j][0]}`'
             pageNames += '\n'
 
+        # print(pageNames)
+
         # add list to embed and return page
         page.add_field(name='Member', value=pageNames, inline=True)
         my_pages.append(page)
@@ -166,12 +167,17 @@ def CreateEmbed(sql, data):
     # returns an array of embeds
     return my_pages
 
-async def handleButtons(self, interaction, currentPage):
+async def handleButtons(self, interaction, nextPage):
     # set final page
-    finalPage = int(interaction.message.components[0].children[2].label.split('/')[1].strip())
+    # finalPage = int(interaction.message.components[0].children[2].label.split('/')[1].strip())
+
+    # retrieve data from database
+    embed = CreateEmbed('SELECT player FROM webscraper WHERE (in_discord IS NULL or in_discord = %s) and in_squadron = %s ORDER BY entry_date DESC;', (False, True))
+
+    finalPage = len(embed)
     
     # create the button that shows page number
-    button3 = discord.ui.Button(label=f'{currentPage} / {finalPage}')
+    button3 = discord.ui.Button(label=f'{nextPage} / {finalPage}')
     button3.disabled = True
 
     # insert the page number button in the middle of all the buttons
@@ -180,15 +186,15 @@ async def handleButtons(self, interaction, currentPage):
     view.children = view.children[0:midpoint] + [button3] + view.children[midpoint:] 
 
     # disable buttons when at min/max values to prevent overflow
-    if currentPage == finalPage:
+    if nextPage == finalPage:
         view.children[3].disabled = True
         view.children[4].disabled = True
-    elif currentPage == 1:
+    elif nextPage == 1:
         view.children[0].disabled = True
         view.children[1].disabled = True
 
     # update message
-    await interaction.message.edit(embed=self.embed[currentPage], view=view)
+    await interaction.message.edit(embed=embed[nextPage - 1], view=view)
     # prevent interaction failed error
     await interaction.response.edit_message()
 
