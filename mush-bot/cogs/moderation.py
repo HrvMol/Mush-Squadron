@@ -51,7 +51,7 @@ class Moderation(commands.Cog):
 
     @slash_command(description="Display the list of people who are not in the discord")
     @commands.has_permissions(administrator = True)
-    async def recruitment(self, ctx):
+    async def no_discord_list(self, ctx):
         try:
             # get data
             embed = CreateEmbed('SELECT player FROM webscraper WHERE (in_discord IS NULL or in_discord = %s) and in_squadron = %s ORDER BY entry_date DESC;', (False, True))
@@ -148,7 +148,7 @@ def CreateEmbed(sql, data):
     for i in range(0, len(names), itemsPerPage):
         pageNames=''
         page = discord.Embed(
-        title=f'Recruitment List',
+        title=f'No Discord List',
         description='It takes a while for War Thunder to update the database.\nBe patient when refreshing doesnt update it instantly.',
         color=discord.Colour.from_rgb(255, 255, 255)
         )
