@@ -7,22 +7,15 @@ class Srb(commands.Cog):
     def __init__(self, bot:commands.Bot):
         self.bot = bot
 
-        self.startUS = int(datetime.datetime.strptime(f'{datetime.date.today()} 01:00', '%Y-%m-%d %H:%M').timestamp())
-        self.endUS = int(datetime.datetime.strptime(f'{datetime.date.today()} 07:00', '%Y-%m-%d %H:%M').timestamp())
-        self.startEU = int(datetime.datetime.strptime(f'{datetime.date.today()} 14:00', '%Y-%m-%d %H:%M').timestamp())
-        self.endEU = int(datetime.datetime.strptime(f'{datetime.date.today()} 22:00', '%Y-%m-%d %H:%M').timestamp())
-        
-
     @commands.Cog.listener()
     async def on_ready(self):
+        self.bot.add_view(signupButtons())
         print("SRB Cog Loaded")
 
     @slash_command(description="Create a signup embed for squadron battles.")
     @commands.has_permissions(manage_messages = True)
     async def signup(self, ctx, br: discord.Option(str, description='Battle Rating'), window: discord.Option(str, description='SRB Window', choices=['US', 'EU']),): # type: ignore
         try:
-            await ctx.response.defer()
-            
             accepted_users = []
             declined_users = []
             tentative_users = []
@@ -35,14 +28,19 @@ class Srb(commands.Cog):
                 color=discord.Colour.from_rgb(255, 255, 255)
             )
 
+            startUS = int(datetime.datetime.strptime(f'{datetime.date.today()} 01:00', '%Y-%m-%d %H:%M').timestamp())
+            endUS = int(datetime.datetime.strptime(f'{datetime.date.today()} 07:00', '%Y-%m-%d %H:%M').timestamp())
+            startEU = int(datetime.datetime.strptime(f'{datetime.date.today()} 14:00', '%Y-%m-%d %H:%M').timestamp())
+            endEU = int(datetime.datetime.strptime(f'{datetime.date.today()} 22:00', '%Y-%m-%d %H:%M').timestamp())
+
             # Setting Times
             if window == 'US':
                 # -/-/-/-/-/-/- NOT SET YET -/-/-/-/-/-/-
-                start = self.startUS
-                end = self.endUS
+                start = startUS
+                end = endUS
             else:
-                start = self.startEU
-                end = self.endEU
+                start = startEU
+                end = endEU
 
             # Ensuring times are correct
             now = int(str(datetime.datetime.now().timestamp()).split('.')[0])
@@ -118,7 +116,10 @@ class Srb(commands.Cog):
             # Create view and add buttons
             view = discord.ui.View(button1, button2, button3, timeout=None)
 
-            msg = await ctx.respond(role.mention, embed=embed, view=view)
+            print(role.mention)
+
+            await ctx.respond(embed=embed, view=view)
+            await ctx.send(role.mention)
         
         except Exception as e:
             self.bot.logging.exception()
@@ -157,7 +158,102 @@ class Srb(commands.Cog):
         except Exception as e:
             self.bot.logging.exception()
             await ctx.respond('An error has occurred')
+        
+    @slash_command()
+    async def better_signup(self, ctx, br: discord.Option(str, description='Battle Rating'), window: discord.Option(str, description='SRB Window', choices=['US', 'EU']),): # type: ignore
+        embed = createSignupEmbed(window, br)
+        view = signupButtons()
 
+        await ctx.respond(embed=embed, view=view)
+
+def createSignupEmbed(window, br):
+    embed = discord.Embed(
+        title=f'Sign up for {window} {br} SRB',
+        description='Mark your attendance below.',
+        color=discord.Colour.from_rgb(255, 255, 255)
+    )
+
+    startUS = int(datetime.datetime.strptime(f'{datetime.date.today()} 01:00', '%Y-%m-%d %H:%M').timestamp())
+    endUS = int(datetime.datetime.strptime(f'{datetime.date.today()} 07:00', '%Y-%m-%d %H:%M').timestamp())
+    startEU = int(datetime.datetime.strptime(f'{datetime.date.today()} 14:00', '%Y-%m-%d %H:%M').timestamp())
+    endEU = int(datetime.datetime.strptime(f'{datetime.date.today()} 22:00', '%Y-%m-%d %H:%M').timestamp())
+
+    # Setting Times
+    if window == 'US':
+        # -/-/-/-/-/-/- NOT SET YET -/-/-/-/-/-/-
+        start = startUS
+        end = endUS
+    else:
+        start = startEU
+        end = endEU
+
+    # Ensuring times are correct
+    now = int(str(datetime.datetime.now().timestamp()).split('.')[0])
+
+    # set time to next day if window has already passed
+    if now > end:
+        start += 86400
+        end += 86400
+
+    embed.add_field(name='Begins at', value=f'<t:{start}:t>, <t:{start}:R>', inline=True)
+    embed.add_field(name='Ends at', value=f'<t:{end}:t>, <t:{end}:R>', inline=True)
+
+    # BE WARNED THIS CONTAINS \u200b ZERO WIDTH CHARACTER
+    embed.add_field(name='\n ​', value='\n ​', inline=False)
+
+    embed.add_field(name='✅ Accepted (0)', value=f'-', inline=True)
+    embed.add_field(name='❌ Declined (0)', value=f'-', inline=True)
+    embed.add_field(name='❔ Tentative (0)', value=f'-', inline=True)
+
+    return embed
+
+async def handleSignupButtons(self, interaction, field):
+    window, br = interaction.message.embeds[0].title[12:-4].split(' ')
+
+    accepted = interaction.message.embeds[0].fields[3]
+    declined = interaction.message.embeds[0].fields[4]
+    tentative = interaction.message.embeds[0].fields[5]
+
+    embed = createSignupEmbed(window, br)
+
+    if field == 'accepted':
+        print('accepted')
+        
+        acceptedUsers = accepted.value
+        print(acceptedUsers)
+
+    
+    for i in range(len(embed.fields)):
+        if field in embed.fields[i].name:
+            print(embed.fields[i].value)
+
+            col, num = embed.fields[i].name.split('(')
+            num = num[:-1]
+            print(col)
+            print(num)
+            print(interaction.user.display_name)
+            embed.set_field_at(index=i, name=f'{col}({num})', value=('\n'.join([])), inline=True)
+
+    # update message
+    await interaction.message.edit(embed=embed)
+    # prevent interaction failed error
+    await interaction.response.edit_message()
+
+class signupButtons(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label='Accept', custom_id='Accepted', style=discord.ButtonStyle.green)
+    async def button1_callback(self, button, interaction):
+        await handleSignupButtons(self, interaction, button.custom_id)
+
+    @discord.ui.button(label='Decline', custom_id='Declined', style=discord.ButtonStyle.red)
+    async def button2_callback(self, button, interaction):
+        await handleSignupButtons(self, interaction, button.custom_id)
+    
+    @discord.ui.button(label='Tentative', custom_id='Tentative', style=discord.ButtonStyle.gray)
+    async def button3_callback(self, button, interaction):
+        await handleSignupButtons(self, interaction, button.custom_id)
 
 def setup(client):
     client.add_cog(Srb(client))
