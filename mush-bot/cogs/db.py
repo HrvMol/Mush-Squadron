@@ -195,6 +195,21 @@ def databaseUpdate(ctx):
         cur.execute('''
                     UPDATE webscraper SET discord_id = %(discord_id)s WHERE player = %(name)s;
                     UPDATE webscraper SET role = %(role)s, in_discord = %(in_discord)s WHERE discord_id = %(discord_id)s;
+                    DELETE FROM webscraper
+                    WHERE CONCAT(player,messages_sent) NOT IN 
+                        (
+                        SELECT CONCAT(player,MAX(messages_sent))
+                        FROM webscraper
+                        GROUP BY player
+                        );
+                    
+                    DELETE FROM webscraper
+                    WHERE CONCAT(player,id) NOT IN 
+                        (
+                        SELECT CONCAT(player,MAX(id))
+                        FROM webscraper
+                        GROUP BY player
+                        );
                     ''', {'role': memberRole.name, 'in_discord': True, 'discord_id': member.id, 'name': member.display_name})
 
     con.commit()

@@ -29,22 +29,7 @@ class Moderation(commands.Cog):
     # @commands.has_permissions(administrator = True)
     # async def removal_list(self, ctx):
     #     try:
-    #         # get data
-    #         my_pages = CreateEmbed('SELECT player FROM webscraper WHERE ', (False, True))
-    #         view = PaginationView()
-
-    #         # set start info
-    #         currentPage = 1
-    #         finalPage = 12
-
-    #         button = discord.ui.Button(label=f'{currentPage} / {finalPage}')
-    #         button.disabled = True
-
-    #         # put page button in the middle of the 1st row
-    #         midpoint = len(view.children)//4
-    #         view.children = view.children[0:midpoint] + [button] + view.children[midpoint:] 
-
-    #         await ctx.respond(embed=my_pages[1], view=view)
+            
     #     except:
     #         self.bot.logging.exception('')
     #         await ctx.respond('An error has occurred')
