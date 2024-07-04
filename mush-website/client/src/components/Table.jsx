@@ -9,7 +9,7 @@ export default function Table() {
 
     // sends request for the data and then sets it once recieved
     useEffect (() => {
-        fetch("http://localhost:5000/users").then(
+        fetch("http://localhost:5000/api/users").then(
             response => response.json()
         ).then(
             data => {
