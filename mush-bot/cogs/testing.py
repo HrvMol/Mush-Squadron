@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord.commands import slash_command
 import requests
 import json
+from cogs.db import auth
 
 class Testing(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -23,6 +24,13 @@ class Testing(commands.Cog):
         x = requests.get(f"http://localhost:5000/users/{discord_id}")
 
         await ctx.respond(f'Response: {x.text}')
+
+    @slash_command(description="test if the authentication is working")
+    async def authorise(self, ctx):
+        x = auth()
+
+        await ctx.respond(f'Response: {x}')
+        
 
 
 def setup(client):

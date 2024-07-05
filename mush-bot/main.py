@@ -11,6 +11,9 @@ import socket
 # USES PY-CORD DISCORD LIBRARY
 import logging
 
+from dotenv import load_dotenv
+load_dotenv()
+
 if sys.platform == "linux":
     try:
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)

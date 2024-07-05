@@ -290,7 +290,13 @@ def databasePost(sql):
 def databaseGetUser(discord_id):
     x = requests.get(f"http://localhost:5000/users/{discord_id}")
     return x.text
-    
+
+def auth():
+    x = requests.post("http://localhost:5000/verify", headers={"auth-token": os.getenv('AUTH_TOKEN')})
+    if x.status_code != 200:
+        x = requests.post("http://localhost:5000/auth", json={"username": os.getenv('DB_USERNAME'), "password": os.getenv('DB_PASSWORD')})
+        print(x.text)
+        return x.text
 
 def setup(client):
     client.add_cog(Db(client))
